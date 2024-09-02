@@ -1,0 +1,47 @@
+﻿<div>
+    <form id="createStudentForm">
+        <div class="form-group">
+            <label for="firstName">Nombre:</label>
+            <input type="text" id="Nombre" name="Nombre" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="lastName">Precio:</label>
+            <input type="number" id="Precio" name="Precio" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="lastName">Fecha Vencimiento:</label>
+            <input type="datetime-local" id="FechaVencimiento" name="FechaVencimiento" class="form-control" />
+        </div>
+
+        <button type="button" id="submitStudentButton" class="btn btn-success">Guardar</button>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#submitStudentButton').click(function () {
+            var Nombre = $('#Nombre').val();
+            var Precio = $('#Precio').val();
+            var FechaVencimiento = $('#FechaVencimiento').val();
+
+            $.ajax({
+                type: "POST",
+                url: "/Productos/SubmitForm",
+                data: {
+                    Nombre: Nombre,
+                    Precio: Precio,
+                    FechaVencimiento: FechaVencimiento
+                },
+                success: function (response) {
+                    alert(response.message);
+                    $('#createStudentModal').modal('hide');
+
+                    location.reload(); // Recargar la página para ver la lista actualizada
+                },
+                error: function () {
+                    alert('Hubo un error al crear el estudiante.');
+                }
+            });
+        });
+    });
+</script>

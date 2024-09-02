@@ -1,0 +1,133 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Lista de Productos</h2>
+
+<div class="form-row">
+    <div class="form-group col-md-3">
+        <label for="Nombre">Nombre:</label>
+        <input type="text" id="Nombre" name="Nombre" class="form-control" />
+    </div>
+    <div class="form-group col-md-3">
+        <label for="Precio">Precio:</label>
+        <input type="number" id="Precio" name="Precio" class="form-control" />
+    </div>
+    <div class="form-group col-md-3 d-flex align-items-end">
+        <button id="listStudentsButton" class="btn btn-primary">Listar Productos</button>
+    </div>
+</div>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Precio</th>
+            <th>Fecha Vencimiento</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Aquí se llenará la tabla con los estudiantes -->
+    </tbody>
+</table>
+
+<button id="createStudentButton" class="btn btn-success">Crear Producto</button>
+
+<!-- Modal para crear estudiante -->
+<div class="modal fade" id="createStudentModal" tabindex="-1" role="dialog" aria-labelledby="createStudentLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createStudentLabel">Crear Estudiante</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- El contenido del modal se carga aquí -->
+                @* Si quiero usar sin la vista parcial, descomento esto *@
+                @* <div>
+                <form id="createStudentForm">
+                <div class="form-group">
+                <label for="firstName">Nombre HUGO:</label>
+                <input type="text" id="firstName" name="firstName" class="form-control" />
+                </div>
+                <div class="form-group">
+                <label for="lastName">Apellido:</label>
+                <input type="text" id="lastName" name="lastName" class="form-control" />
+                </div>
+                <button type="button" id="submitStudentButton" class="btn btn-success">Guardar</button>
+                </form>
+                </div> *@
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        CargaInicial();
+        //Cargar el contenido del modal para crear estudiante
+        $('#createStudentButton').click(function () {
+
+            //Si quiero mostrar sin usar la vista parcial
+            //$('#createStudentModal').modal('show');
+            $.ajax({
+                type: "GET",
+                url: "/Productos/CreateProductos",
+                success: function (response) {
+                    $('.modal-body').html(response);
+                    $('#createStudentModal').modal('show');
+                },
+                error: function () {
+                    alert('Hubo un error al cargar el formulario.');
+                }
+            });
+        });
+
+        // Listar estudiantes y actualizar la tabla
+        $('#listStudentsButton').click(function () {
+            CargaInicial();
+        });
+
+        function CargaInicial() {
+            var Nombre = $("#Nombre").val();
+            var Precio = $("#Precio").val();
+
+
+            $.ajax({
+                type: "GET",
+                url: "/Productos/GetProductos",
+                data: {
+                    Nombre : Nombre,
+                    Precio : Precio
+                },
+                success: function (productos) {
+                    console.log(productos)
+                    var tableBody = $('table tbody');
+                    tableBody.empty(); // Vaciar la tabla
+
+                    productos.forEach(function (productos) {
+                        var newRow = `
+                                    <tr>
+                                            <td>${productos.id}</td>
+                                            <td>${productos.nombre}</td>
+                                            <td>${productos.precio}</td>
+                                            <td>${productos.fechaVencimiento}</td>
+                                    </tr>`;
+                        tableBody.append(newRow);
+                    });
+                },
+                error: function () {
+                    alert('Hubo un error al listar los estudiantes.');
+                }
+            });
+        }
+    });
+</script>
